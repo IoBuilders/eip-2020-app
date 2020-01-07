@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "EIP 2020",
+  "name": "An app to interact with an EIP 2020 token",
   "icons": [
     {
       "src": "favicon.ico",
