@@ -1,5 +1,7 @@
+import LockIcon from '@material-ui/icons/Lock';
 import PaymentIcon from '@material-ui/icons/Payment';
-import ThumbsUpDownIcon from '@material-ui/icons/ThumbsUpDown';
+import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+import ThumbsDownIcon from '@material-ui/icons/ThumbsDown';
 
 import Transfer from '../Transfer';
 import CreateHold from '../CreateHold';
@@ -16,19 +18,19 @@ const items = [
   },
   {
     label: 'CreateHold',
-    icon: ThumbsUpDownIcon,
+    icon: LockIcon,
     component: CreateHold,
     role: ROLE_USER,
   },
   {
     label: 'Release Hold',
-    icon: ThumbsUpDownIcon,
+    icon: ThumbsDownIcon,
     component: ReleaseHold,
     role: ROLE_NOTARY,
   },
   {
     label: 'Execute Hold',
-    icon: ThumbsUpDownIcon,
+    icon: ThumbUpIcon,
     component: ExecuteHold,
     role: ROLE_NOTARY,
   }
