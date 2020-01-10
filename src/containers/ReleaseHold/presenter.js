@@ -3,9 +3,13 @@ import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import {TRANSACTION_STATUS_ERROR, TRANSACTION_STATUS_PENDING, TRANSACTION_STATUS_SUCCESS} from "../../constants"
 import CircularProgress from "@material-ui/core/CircularProgress"
-import Container from "@material-ui/core/Container"
+
+import SuccessMessage from "../../components/SuccessMessage"
+import ErrorMessage from "../../components/ErrorMessage"
+import CenteredGrid from "../../components/CenteredGrid"
+
+import {TRANSACTION_STATUS_ERROR, TRANSACTION_STATUS_PENDING, TRANSACTION_STATUS_SUCCESS} from "../../constants"
 
 class ReleaseHoldPresenter extends React.Component {
   render() {
@@ -26,22 +30,22 @@ class ReleaseHoldPresenter extends React.Component {
             onChange={e => this.props.handleOnChangeHoldId(e.target.value)}
           />
         </Grid>
-        <Grid item>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => this.props.handleOnReleaseHold(this.props.holdId)}
-          >
-            Release
-          </Button>
-        </Grid>
-        <Grid item xs={12}>
-          <Container>
+        <CenteredGrid container item direction='column' spacing={1}>
+          <Grid item>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => this.props.handleOnReleaseHold(this.props.holdId)}
+            >
+              Release
+            </Button>
+          </Grid>
+          <Grid item>
             { this.props.status === TRANSACTION_STATUS_PENDING && <CircularProgress /> }
-            { this.props.status === TRANSACTION_STATUS_SUCCESS && <Typography color='green'>Completed</Typography> }
-            { this.props.status === TRANSACTION_STATUS_ERROR && <Typography color='red'>Error</Typography> }
-          </Container>
-        </Grid>
+            { this.props.status === TRANSACTION_STATUS_SUCCESS && <SuccessMessage>Completed</SuccessMessage> }
+            { this.props.status === TRANSACTION_STATUS_ERROR && <ErrorMessage>Error</ErrorMessage> }
+          </Grid>
+        </CenteredGrid>
       </Grid>
     );
   }

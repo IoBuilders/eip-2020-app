@@ -1,11 +1,15 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
-import TextField from "@material-ui/core/TextField"
-import Button from "@material-ui/core/Button"
-import Grid from "@material-ui/core/Grid"
-import {TRANSACTION_STATUS_ERROR, TRANSACTION_STATUS_PENDING, TRANSACTION_STATUS_SUCCESS} from "../../constants"
-import CircularProgress from "@material-ui/core/CircularProgress"
-import Container from "@material-ui/core/Container"
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
+import SuccessMessage from '../../components/SuccessMessage';
+import ErrorMessage from '../../components/ErrorMessage';
+import CenteredGrid from '../../components/CenteredGrid';
+
+import { TRANSACTION_STATUS_ERROR, TRANSACTION_STATUS_PENDING, TRANSACTION_STATUS_SUCCESS } from '../../constants';
 
 class CreateHoldPresenter extends React.Component {
   render() {
@@ -68,28 +72,28 @@ class CreateHoldPresenter extends React.Component {
             />
           </Grid>
         </Grid>
-        <Grid item>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => this.props.handleOnCreateHold(
-              this.props.holdId,
-              this.props.to,
-              this.props.amount,
-              this.props.expiration,
-              this.props.notary
-            )}
-          >
-            Create
-          </Button>
-        </Grid>
-        <Grid item xs={12}>
-          <Container>
+        <CenteredGrid container item direction='column' spacing={1}>
+          <Grid item>
+            <Button
+              variant='contained'
+              color='primary'
+              onClick={() => this.props.handleOnCreateHold(
+                this.props.holdId,
+                this.props.to,
+                this.props.amount,
+                this.props.expiration,
+                this.props.notary
+              )}
+            >
+              Create
+            </Button>
+          </Grid>
+          <Grid item>
             { this.props.status === TRANSACTION_STATUS_PENDING && <CircularProgress /> }
-            { this.props.status === TRANSACTION_STATUS_SUCCESS && <Typography color='textSecondary'>Completed</Typography> }
-            { this.props.status === TRANSACTION_STATUS_ERROR && <Typography color='textSecondary'>Error</Typography> }
-          </Container>
-        </Grid>
+            { this.props.status === TRANSACTION_STATUS_SUCCESS && <SuccessMessage>Completed</SuccessMessage> }
+            { this.props.status === TRANSACTION_STATUS_ERROR && <ErrorMessage>Error</ErrorMessage> }
+          </Grid>
+        </CenteredGrid>
       </Grid>
     );
   }

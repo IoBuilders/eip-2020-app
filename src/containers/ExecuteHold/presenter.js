@@ -3,9 +3,12 @@ import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import Container from "@material-ui/core/Container"
 import {TRANSACTION_STATUS_ERROR, TRANSACTION_STATUS_PENDING, TRANSACTION_STATUS_SUCCESS} from "../../constants"
 import CircularProgress from "@material-ui/core/CircularProgress"
+
+import SuccessMessage from "../../components/SuccessMessage"
+import ErrorMessage from "../../components/ErrorMessage"
+import CenteredGrid from "../../components/CenteredGrid"
 
 class ExecuteHoldPresenter extends React.Component {
   render() {
@@ -39,22 +42,22 @@ class ExecuteHoldPresenter extends React.Component {
             onChange={e => this.props.handleOnChangeAmount(e.target.value)}
           />
         </Grid>
-        <Grid item>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => this.props.handleOnExecuteHold(this.props.holdId, this.props.amount)}
-          >
-            Execute
-          </Button>
-        </Grid>
-        <Grid item xs={12}>
-          <Container>
+        <CenteredGrid container item direction='column' spacing={1}>
+          <Grid item>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => this.props.handleOnExecuteHold(this.props.holdId, this.props.amount)}
+            >
+              Execute
+            </Button>
+          </Grid>
+          <Grid>
             { this.props.status === TRANSACTION_STATUS_PENDING && <CircularProgress /> }
-            { this.props.status === TRANSACTION_STATUS_SUCCESS && <Typography>Completed</Typography> }
-            { this.props.status === TRANSACTION_STATUS_ERROR && <Typography>Error</Typography> }
-          </Container>
-        </Grid>
+            { this.props.status === TRANSACTION_STATUS_SUCCESS && <SuccessMessage>Completed</SuccessMessage> }
+            { this.props.status === TRANSACTION_STATUS_ERROR && <ErrorMessage>Error</ErrorMessage> }
+          </Grid>
+        </CenteredGrid>
       </Grid>
     );
   }

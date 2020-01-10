@@ -1,13 +1,15 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import CircularProgress from "@material-ui/core/CircularProgress";
 
-import { TRANSACTION_STATUS_PENDING, TRANSACTION_STATUS_SUCCESS, TRANSACTION_STATUS_ERROR } from '../../constants';
+import SuccessMessage from "../../components/SuccessMessage"
+import ErrorMessage from "../../components/ErrorMessage"
 
+import { TRANSACTION_STATUS_PENDING, TRANSACTION_STATUS_SUCCESS, TRANSACTION_STATUS_ERROR } from '../../constants';
+import CenteredGrid from "../../components/CenteredGrid"
 
 class TransferPresenter extends React.Component {
   render() {
@@ -40,22 +42,22 @@ class TransferPresenter extends React.Component {
             />
           </Grid>
         </Grid>
-        <Grid item>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => this.props.handleOnTransfer(this.props.to, this.props.amount)}
-          >
-            Transfer
-          </Button>
-        </Grid>
-        <Grid item xs={12}>
-          <Container>
+        <CenteredGrid container item direction='column' spacing={1}>
+          <Grid item>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => this.props.handleOnTransfer(this.props.to, this.props.amount)}
+            >
+              Transfer
+            </Button>
+          </Grid>
+          <Grid item>
             { this.props.status === TRANSACTION_STATUS_PENDING && <CircularProgress /> }
-            { this.props.status === TRANSACTION_STATUS_SUCCESS && <Typography color='green'>Completed</Typography> }
-            { this.props.status === TRANSACTION_STATUS_ERROR && <Typography color='red'>Error</Typography> }
-          </Container>
-        </Grid>
+            { this.props.status === TRANSACTION_STATUS_SUCCESS && <SuccessMessage>Completed</SuccessMessage> }
+            { this.props.status === TRANSACTION_STATUS_ERROR && <ErrorMessage>Error</ErrorMessage> }
+          </Grid>
+        </CenteredGrid>
       </Grid>
     );
   }
