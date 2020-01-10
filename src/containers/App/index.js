@@ -1,44 +1,61 @@
-import React from 'react';
-import {BrowserRouter as Router, Route, Switch} from "react-router-dom"
-import Container from "@material-ui/core/Container"
-import Grid from "@material-ui/core/Grid"
-import Typography from "@material-ui/core/Typography"
-import {Provider} from "react-redux"
+import { connect } from 'react-redux';
 
-import store from "./store"
-import navigationItems from "../Navigation/items"
-import Navigation from "../Navigation/Navigation"
-import Account from "../Account"
+import { addAccount, updateSelectedAccountIndex } from './actions';
+import { updateNotary } from '../CreateHold/actions';
 
-class App extends React.Component {
-  render() {
-    return (
-      <Provider store={ store }>
-        <Router>
-          <Container maxWidth='md'>
-            <Typography variant='h1' align='center'>EIP-2020</Typography>
-            <Grid container spacing={2} direction='column'>
-              <Grid item container>
-                <Grid item sm>
-                  <Switch>
-                    {navigationItems.map((item, i) => (
-                      <Route key={i} exact path={item.path} component={item.component} />
-                    ))}
-                  </Switch>
-                </Grid>
-                <Grid item xl>
-                  <Account/>
-                </Grid>
-              </Grid>
-              <Grid item>
-                <Navigation items={navigationItems}/>
-              </Grid>
-            </Grid>
-          </Container>
-        </Router>
-      </Provider>
-    );
+import AppPresenter from './presenter';
+import { privateKeyToWallet, createNewWallet } from '../../services/token-service';
+import { ROLE_NOTARY, ROLE_USER } from '../../constants';
+import navigationItems from '../Navigation/items';
+
+function getSelectedAddress(state) {
+  if (state.app.accounts.length === 0) {
+    return '';
   }
+
+  return state.app.accounts[state.app.selectedAccountIndex].wallet.address;
 }
+
+function getSelectedRole(state) {
+  if (state.app.accounts.length === 0) {
+    return '';
+  }
+
+  return state.app.accounts[state.app.selectedAccountIndex].role;
+}
+
+const mapStateToProps = state => {
+  return {
+    showImportAccount: state.app.accounts.length === 0,
+    accounts: state.app.accounts,
+    selectedAccountIndex: state.app.selectedAccountIndex,
+    selectedAddress: getSelectedAddress(state),
+    navigationItems: navigationItems.filter((item) => item.role === getSelectedRole(state))
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    handleImport: (senderPrivateKey, receiverPrivateKey) => {
+      const notaryWallet = createNewWallet();
+
+      dispatch(addAccount(privateKeyToWallet(senderPrivateKey), 'Sender', ROLE_USER));
+      dispatch(addAccount(privateKeyToWallet(receiverPrivateKey), 'Receiver', ROLE_USER));
+      dispatch(addAccount(notaryWallet, 'Notary', ROLE_NOTARY));
+
+      dispatch(updateNotary(notaryWallet.address));
+
+      dispatch(updateSelectedAccountIndex(0));
+    },
+    handleAccountChange: (selectedAccountIndex) => {
+      dispatch(updateSelectedAccountIndex(selectedAccountIndex));
+    }
+  };
+}
+
+const App = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AppPresenter);
 
 export default App;

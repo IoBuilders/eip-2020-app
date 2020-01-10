@@ -1,49 +1,90 @@
-import Web3 from 'web3';
+import { ethers } from 'ethers';
 import EmoneyToken from 'emoney-token/build/EmoneyToken';
 
-import { getContractAddress, getFromAddress, getNodeUrl } from "./environment-service";
+import { getContractAddress, getDecimals, getNodeUrl } from './environment-service';
 
-const provider = new Web3.providers.HttpProvider(
-  getNodeUrl(),
-  {
-    headers: [
-      {
-        name: 'Access-Control-Max-Age',
-        value: 600
-      },
-    ],
-    withCredentials: false,
-  }
-);
-const web3 = new Web3(provider)
+const decimals = getDecimals();
+const provider = new ethers.providers.JsonRpcProvider(getNodeUrl());
+const transactionOptions = {
+  gasLimit: 4000000,
+  gasPrice: 0,
+}
 
-const eip2020 = new web3.eth.Contract(
-  EmoneyToken.abi,
+let eip2020Token = new ethers.Contract(
   getContractAddress(),
-  {
-    from: getFromAddress(),
-  }
+  EmoneyToken.abi,
+  provider
 )
 
+function tokenToCurrency(amount) {
+  return amount.toNumber() / Math.pow(10, decimals);
+}
+
+function currencyToToken(amount) {
+  return amount * Math.pow(10, decimals);
+}
+
 async function balanceOf(address) {
-  console.log(`balanceOf: address: ${address}`);
-  let balance = 0;
+  let balance;
 
   try {
-    balance = await eip2020.methods.balanceOf(address).call();
-    console.log(`balanceOf: balance: ${balance}`);
+    balance = await eip2020Token.balanceOf(address);
   } catch (err) {
     console.error(`Could not get balance of ${address}: ${err.toString()}`)
   }
 
-  return balance
+  return tokenToCurrency(balance);
 }
 
 async function balanceOnHold(address) {
-  return eip2020.methods.balanceOnHold(address).call();
+  let balanceOnHold = 0;
+
+  try {
+    balanceOnHold = await eip2020Token.balanceOnHold(address);
+  } catch (err) {
+    console.error(`Could not get held balance of ${address}: ${err.toString()}`)
+  }
+
+  return tokenToCurrency(balanceOnHold);
 }
 
-export default {
+function connectWallet(wallet) {
+  eip2020Token = eip2020Token.connect(wallet);
+}
+
+function privateKeyToWallet(privateKey) {
+  return new ethers.Wallet(privateKey, provider);
+}
+
+function createNewWallet() {
+  const wallet = ethers.Wallet.createRandom();
+  return wallet.connect(provider);
+}
+
+async function transfer(to, value) {
+  return eip2020Token.transfer(to, currencyToToken(value), transactionOptions);
+}
+
+async function hold(holdId, to, value, expiration, notary) {
+  return eip2020Token.hold(holdId, to, notary, currencyToToken(value), expiration, transactionOptions);
+}
+
+async function releaseHold(holdId) {
+  return eip2020Token.releaseHold(holdId, transactionOptions);
+}
+
+async function executeHold(holdId, value) {
+  return eip2020Token.executeHold(holdId, currencyToToken(value), transactionOptions);
+}
+
+export {
   balanceOf,
   balanceOnHold,
-}
+  connectWallet,
+  createNewWallet,
+  privateKeyToWallet,
+  transfer,
+  hold,
+  releaseHold,
+  executeHold,
+};

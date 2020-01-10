@@ -1,10 +1,33 @@
-import React from 'react';
-import Typography from '@material-ui/core/Typography';
+import { connect } from 'react-redux';
 
-function TransferPage() {
-  return (
-    <Typography variant='h2' align='center'>Transfer</Typography>
-  );
-}
+import TransferPresenter from './presenter';
+import { sendTransfer, updateAmount, updateTo } from './actions';
 
-export default TransferPage;
+const mapStateToProps = state => {
+  return {
+    amount: state.transfer.amount,
+    status: state.transfer.status,
+    to: state.transfer.to,
+  }
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    handleOnTransfer: (to, amount) => {
+      dispatch(sendTransfer(to, amount));
+    },
+    handleOnChangeAmount: amount => {
+      dispatch(updateAmount(amount));
+    },
+    handleOnChangeTo: to => {
+      dispatch(updateTo(to));
+    }
+  }
+};
+
+const Transfer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TransferPresenter);
+
+export default Transfer;
