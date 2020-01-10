@@ -9,29 +9,25 @@ import { ROLE_USER, ROLE_NOTARY } from '../../constants';
 
 const items = [
   {
-    path: '/',
     label: 'Transfer',
     icon: PaymentIcon,
     component: Transfer,
     role: ROLE_USER,
   },
   {
-    path: '/hold',
     label: 'CreateHold',
     icon: ThumbsUpDownIcon,
     component: CreateHold,
     role: ROLE_USER,
   },
   {
-    path: '/release-hold',
-    label: 'Release CreateHold',
+    label: 'Release Hold',
     icon: ThumbsUpDownIcon,
     component: ReleaseHold,
     role: ROLE_NOTARY,
   },
   {
-    path: '/execute-hold',
-    label: 'Execute CreateHold',
+    label: 'Execute Hold',
     icon: ThumbsUpDownIcon,
     component: ExecuteHold,
     role: ROLE_NOTARY,

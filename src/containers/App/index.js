@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 
-import { addAccount, updateSelectedAccountIndex } from './actions';
+import {addAccount, updateSelectedAccountIndex, updateSelectedNavigationIndex} from './actions';
 import { updateNotary } from '../CreateHold/actions';
 
 import AppPresenter from './presenter';
@@ -30,7 +30,8 @@ const mapStateToProps = state => {
     accounts: state.app.accounts,
     selectedAccountIndex: state.app.selectedAccountIndex,
     selectedAddress: getSelectedAddress(state),
-    navigationItems: navigationItems.filter((item) => item.role === getSelectedRole(state))
+    navigationItems: navigationItems.filter((item) => item.role === getSelectedRole(state)),
+    selectedNavigationIndex: state.app.selectedNavigationIndex,
   };
 };
 
@@ -49,7 +50,11 @@ const mapDispatchToProps = dispatch => {
     },
     handleAccountChange: (selectedAccountIndex) => {
       dispatch(updateSelectedAccountIndex(selectedAccountIndex));
-    }
+      dispatch(updateSelectedNavigationIndex(0));
+    },
+    handleNavigationChange: (navigationIndex) => {
+      dispatch(updateSelectedNavigationIndex(navigationIndex));
+    },
   };
 }
 

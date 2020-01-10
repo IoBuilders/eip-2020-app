@@ -1,22 +1,20 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import { withStyles } from '@material-ui/core/styles';
 
 import Navigation from '../Navigation/Navigation';
 import ImportAccount from '../ImportAccount';
 import Balance from '../Balance';
 import AccountSelector from '../AccountSelector';
 
-const styles = () => ({
-  root: {
-    flexGrow: 1,
-  },
-});
-
 class AppPresenter extends React.Component {
+  renderSelectedContainer() {
+    const selectedNavigationItem = this.props.navigationItems[this.props.selectedNavigationIndex];
+
+    return <selectedNavigationItem.component />;
+  }
+
   render() {
     return (
       <Container maxWidth='xl'>
@@ -24,43 +22,34 @@ class AppPresenter extends React.Component {
         { this.props.showImportAccount ? (
           <ImportAccount show={this.props.showImportAccount} handleImport={this.props.handleImport} />
         ) : (
-          <Router>
-            <div className={this.props.classes.root}>
-              <Grid container spacing={2} direction='column'>
-                <Grid container item justify='space-between'>
-                  <Grid item>
-                    <AccountSelector
-                      accounts={this.props.accounts}
-                      handleOnChange={this.props.handleAccountChange}
-                      selectedAccount={this.props.selectedAccountIndex}
-                    />
-                  </Grid>
-                  <Grid item>
-                      <Switch>
-                        {this.props.navigationItems.map((item, i) => (
-                          <Route
-                            key={i}
-                            exact
-                            path={item.path}
-                            render={(props) => <item.component {...props} />}
-                          />
-                        ))}
-                      </Switch>
-                  </Grid>
-                  <Grid item>
-                      <Balance address={this.props.selectedAddress}/>
-                  </Grid>
+            <Grid container spacing={2} direction='column'>
+              <Grid container item justify='space-between'>
+                <Grid item>
+                  <AccountSelector
+                    accounts={this.props.accounts}
+                    handleOnChange={this.props.handleAccountChange}
+                    selectedAccount={this.props.selectedAccountIndex}
+                  />
                 </Grid>
                 <Grid item>
-                  <Navigation items={this.props.navigationItems} />
+                  { this.renderSelectedContainer() }
+                </Grid>
+                <Grid item>
+                    <Balance address={this.props.selectedAddress}/>
                 </Grid>
               </Grid>
-            </div>
-          </Router>
+              <Grid item>
+                <Navigation
+                  items={this.props.navigationItems}
+                  selectedNavigationIndex={this.props.selectedNavigationIndex}
+                  handleOnChange={this.props.handleNavigationChange}
+                />
+              </Grid>
+            </Grid>
           )}
       </Container>
     );
   }
 }
 
-export default withStyles(styles)(AppPresenter);
+export default AppPresenter;
